@@ -1,103 +1,108 @@
-import Image from "next/image";
+'use client'
 
-export default function Home() {
+import { useState, useEffect } from 'react'
+
+export default function HomePage() {
+  const [valorConta, setValorConta] = useState('')
+  const [numPessoas, setNumPessoas] = useState('')
+  const [incluirGarcom, setIncluirGarcom] = useState(false)
+  const [resultado, setResultado] = useState<number | null>(null)
+  const [erro, setErro] = useState('')
+
+  useEffect(() => {
+    document.title = 'Dividir Conta de Bar'
+    
+    const metaDescription = document.querySelector('meta[name="description"]')
+    if (metaDescription) {
+      metaDescription.setAttribute('content', 'Calculadora para dividir a conta de bar entre amigos')
+    } else {
+      const meta = document.createElement('meta')
+      meta.name = 'description'
+      meta.content = 'Calculadora para dividir a conta de bar entre amigos'
+      document.head.appendChild(meta)
+    }
+  }, [])
+
+  const calcularDivisao = () => {
+    const valor = parseFloat(valorConta)
+    const pessoas = parseInt(numPessoas)
+
+    if (isNaN(valor) || isNaN(pessoas) || valor <= 0 || pessoas <= 0) {
+      setErro('Preencha os campos corretamente.')
+      setResultado(null)
+      return
+    }
+
+    setErro('')
+    const totalComTaxa = incluirGarcom ? valor * 1.1 : valor
+    const valorPorPessoa = totalComTaxa / pessoas
+
+    setResultado(Number(valorPorPessoa.toFixed(2)))
+  }
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <main className="flex min-h-screen flex-col items-center justify-center p-4 bg-gray-100">
+      <div className="bg-white p-6 rounded shadow-md w-full max-w-md">
+        <h1 className="text-2xl font-bold mb-4 text-center">Dividir Conta de Bar</h1>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+        <label className="block mb-2">
+          Valor total da conta (R$):
+          <input
+            type="number"
+            className="w-full mt-1 p-2 border rounded"
+            value={valorConta}
+            onChange={(e) => setValorConta(e.target.value)}
+            placeholder="Ex: 120.50"
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
+        </label>
+
+        <label className="block mb-2">
+          Número de pessoas:
+          <input
+            type="number"
+            className="w-full mt-1 p-2 border rounded"
+            value={numPessoas}
+            onChange={(e) => setNumPessoas(e.target.value)}
+            placeholder="Ex: 4"
           />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
+        </label>
+
+        <label className="flex items-center gap-2 my-3">
+          <input
+            type="checkbox"
+            checked={incluirGarcom}
+            onChange={() => setIncluirGarcom(!incluirGarcom)}
           />
-          Go to nextjs.org →
+          Incluir 10% do garçom
+        </label>
+
+        <button
+          className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition"
+          onClick={calcularDivisao}
+        >
+          Calcular
+        </button>
+
+        {erro && <p className="text-red-600 mt-3">{erro}</p>}
+
+        {resultado !== null && (
+          <p className="mt-4 text-lg text-center font-semibold">
+            Cada pessoa deve pagar: <br />
+            <span className="text-green-600 text-2xl">R$ {resultado.toFixed(2)}</span>
+          </p>
+        )}
+        <footer className="mt-8 text-center text-sm text-gray-500">
+          Feito por{' '}
+        <a
+           href="https://github.com/GuilhermeB12"
+           target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 hover:underline"
+        >
+          GuilhermeB12
         </a>
-      </footer>
-    </div>
-  );
+</footer>
+      </div>
+    </main>
+  )
 }
